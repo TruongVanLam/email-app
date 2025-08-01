@@ -64,11 +64,19 @@ export async function addAccount() {
   }
 }
 
-export async function searchEmails({ fromDate, toDate, accountIDs }) {
+export async function searchEmails({
+  fromDate,
+  toDate,
+  accountIDs,
+  page,
+  pageSize,
+}) {
   const params = new URLSearchParams();
   if (accountIDs) params.append("account_ids", accountIDs);
   if (fromDate) params.append("from_date", fromDate);
   if (toDate) params.append("to_date", toDate);
+  if (page) params.append("current_page", page);
+  if (pageSize) params.append("page_size", pageSize);
 
   const res = await fetch(`${API_BASE_URL}/api/v1/mails?${params.toString()}`, {
     headers: {
