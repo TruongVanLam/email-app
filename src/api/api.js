@@ -15,7 +15,7 @@ const handleResponseError = (res) => {
   }
 };
 
-export async function login(email, password) {
+export async function apiLogin(email, password) {
   const res = await fetch(`${API_BASE_URL}/api/v1/users/login`, {
     method: "POST",
     headers: {
@@ -33,7 +33,7 @@ export async function login(email, password) {
   return data;
 }
 
-export async function getAccounts() {
+export async function apiGetAccounts() {
   const res = await fetch(`${API_BASE_URL}/api/v1/accounts`, {
     headers: {
       accept: "application/json",
@@ -51,8 +51,8 @@ export async function getAccounts() {
   }
 }
 
-export async function addAccount() {
-  const res = await fetch(`${API_BASE_URL}/api/v1/users/login`, {
+export async function apiAddAccount() {
+  const res = await fetch(`${API_BASE_URL}/api/v1/login`, {
     method: "GET",
     headers: { accept: "application/json" },
   });
@@ -64,7 +64,7 @@ export async function addAccount() {
   }
 }
 
-export async function searchEmails({
+export async function apiSearchEmails({
   fromDate,
   toDate,
   accountIDs,
@@ -87,7 +87,7 @@ export async function searchEmails({
   return res.json();
 }
 
-export async function exportEmailsToExcel({ fromDate, toDate, accountIDs }) {
+export async function apiExportEmailsToExcel({ fromDate, toDate, accountIDs }) {
   const params = new URLSearchParams();
   if (fromDate) params.append("from_date", fromDate);
   if (toDate) params.append("to_date", toDate);
@@ -107,7 +107,7 @@ export async function exportEmailsToExcel({ fromDate, toDate, accountIDs }) {
   handleDownload(await res.blob(), finalName);
 }
 
-export async function logout() {
+export async function apiLogout() {
   await fetch("/api/logout", {
     method: "POST",
     headers: {

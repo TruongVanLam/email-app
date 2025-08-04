@@ -1,12 +1,17 @@
 import { useState } from "react";
 import LoginForm from "../components/LoginForm";
-import { login } from "../api/api";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { apiLogin } from "../api/api";
 
-export default function LoginPage({ onLoginSuccess }) {
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,12 +19,13 @@ export default function LoginPage({ onLoginSuccess }) {
     setError("");
 
     try {
-      const result = await login(email, password);
+      const result = await apiLogin(email, password);
       const token = result.access_token;
-      onLoginSuccess(token);
-      localStorage.setItem("token", token);
+      login(token);
       localStorage.setItem("email", result.email);
       localStorage.setItem("role", result.role);
+
+      navigate("/");
     } catch (err) {
       setError(err.message || "Đăng nhập thất bại");
     } finally {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table } from "antd";
 
-import { getAccounts } from "../api/api";
+import { apiGetAccounts } from "../api/api";
 
 const columns = [
   {
@@ -28,7 +28,7 @@ export default function TableRowSelection({ emails, setEmails }) {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const result = await getAccounts();
+        const result = await apiGetAccounts();
         setData(result);
 
         const allIds = result.map((item) => item.id);

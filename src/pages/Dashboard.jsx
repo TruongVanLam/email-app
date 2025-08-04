@@ -3,8 +3,11 @@ import { Modal, Spin, Table, Tag, Tooltip } from "antd";
 import { TableOutlined } from "@ant-design/icons";
 import { createStyles } from "antd-style";
 
-import { searchEmails, exportEmailsToExcel, getAccounts } from "../api/api";
-import Profile from "../components/Profile";
+import {
+  apiSearchEmails,
+  apiExportEmailsToExcel,
+  apiGetAccounts,
+} from "../api/api";
 import TableRowSelection from "../components/TableRowSelection";
 
 const useStyle = createStyles(({ css, token }) => {
@@ -114,7 +117,7 @@ export default function Dashboard() {
   const handleSearch = async (page = 1) => {
     setIsLoadingTable(true);
     try {
-      const res = await searchEmails({
+      const res = await apiSearchEmails({
         fromDate: from,
         toDate: to,
         accountIDs: emails.map((item) => item.id).join(","),
@@ -132,13 +135,13 @@ export default function Dashboard() {
     const fetchInitialData = async () => {
       setIsLoadingTable(true);
       try {
-        const accounts = await getAccounts();
+        const accounts = await apiGetAccounts();
         const allEmails = accounts.map((item) => ({
           id: item.id,
           email: item.email,
         }));
         setEmails(allEmails);
-        const res = await searchEmails({
+        const res = await apiSearchEmails({
           fromDate: from,
           toDate: to,
           accountIDs: accounts.map((item) => item.id).join(","),
@@ -157,7 +160,7 @@ export default function Dashboard() {
   const handleExport = async () => {
     setIsLoadingExport(true);
     try {
-      await exportEmailsToExcel({
+      await apiExportEmailsToExcel({
         fromDate: from,
         toDate: to,
         accountIDs: emails.map((item) => item.id).join(","),
@@ -171,13 +174,7 @@ export default function Dashboard() {
 
   return (
     <div className="px-10">
-      <div className="sticky top-0 z-10 bg-white rounded mb-4">
-        <div className="flex justify-between items-center py-4">
-          <h2 className="text-3xl font-semibold mb-2 text-left uppercase">
-            Management email outlook
-          </h2>
-          <Profile />
-        </div>
+      <div className="bg-white rounded mb-4">
         <div className="flex items-center mt-7 gap-40">
           <div className="flex gap-5 items-center">
             <div className="flex gap-7 items-center">
@@ -185,8 +182,11 @@ export default function Dashboard() {
                 title={
                   emails.length ? (
                     <div className="w-max">
-                      {emails.map((item, idx) => (
-                        <div key={idx} className="whitespace-nowrap px-2 py-1">
+                      {emails.map((item) => (
+                        <div
+                          key={item.id}
+                          className="whitespace-nowrap px-2 py-1"
+                        >
                           {item.email}
                         </div>
                       ))}
@@ -240,7 +240,7 @@ export default function Dashboard() {
           </div>
           <div className="flex gap-7 items-center">
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded cursor-pointer"
               onClick={() => handleSearch(1)}
               disabled={isLoadingTable}
             >
@@ -248,9 +248,9 @@ export default function Dashboard() {
             </button>
             <button
               onClick={handleExport}
-              className="bg-green-500 text-white px-4 py-2 rounded"
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded cursor-pointer"
             >
-              {isLoadingExport ? "Exporting..." : "Export Excel"}
+              {isLoadingExport ? "Exporting..." : "Export excel"}
             </button>
           </div>
         </div>
@@ -259,6 +259,7 @@ export default function Dashboard() {
       <Table
         className={styles.customTable}
         columns={columns}
+        rowKey={(record) => record.id}
         dataSource={data.meta_receipts}
         loading={isLoadingTable}
         pagination={{
