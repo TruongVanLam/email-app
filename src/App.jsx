@@ -16,7 +16,10 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/login" element={<AuthLayout />} />
+      <Route
+        path="/login"
+        element={token ? <Navigate to="/" replace /> : <AuthLayout />}
+      />
 
       <Route
         path="/"
