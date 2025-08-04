@@ -10,6 +10,8 @@ const handleResponseError = (res) => {
     if (res.status.toString().startsWith("4")) {
       handleTokenExpiration();
       return;
+    } else if (res.status.toString().startsWith("5")) {
+      throw new Error("Server error, please try again later.");
     }
     throw new Error(`Error ${res.status}: ${res.statusText}`);
   }
@@ -52,12 +54,12 @@ export async function apiGetAccounts() {
 }
 
 export async function apiAddAccount() {
-  const res = await fetch(`${API_BASE_URL}/api/v1/login`, {
-    method: "GET",
-    headers: { accept: "application/json" },
-  });
-
   try {
+    const res = await fetch(`${API_BASE_URL}/api/v1/login`, {
+      method: "GET",
+      headers: { accept: "application/json" },
+    });
+
     return await res.json();
   } catch (err) {
     throw new Error(`Could not pass to json: ${err.message}`);
@@ -78,13 +80,20 @@ export async function apiSearchEmails({
   if (page) params.append("current_page", page);
   if (pageSize) params.append("page_size", pageSize);
 
-  const res = await fetch(`${API_BASE_URL}/api/v1/mails?${params.toString()}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  });
-  handleResponseError(res);
-  return res.json();
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/v1/mails?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    handleResponseError(res);
+    return res.json();
+  } catch (err) {
+    throw new Error(`Could not pass to json: ${err.message}`);
+  }
 }
 
 export async function apiExportEmailsToExcel({ fromDate, toDate, accountIDs }) {
@@ -93,18 +102,22 @@ export async function apiExportEmailsToExcel({ fromDate, toDate, accountIDs }) {
   if (toDate) params.append("to_date", toDate);
   if (accountIDs) params.append("account_ids", accountIDs);
 
-  const res = await fetch(
-    `${API_BASE_URL}/api/v1/export/meta-receipts?${params.toString()}`,
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    }
-  );
-  handleResponseError(res);
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/api/v1/export/meta-receipts?${params.toString()}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    handleResponseError(res);
 
-  const finalName = createFilename(fromDate, toDate);
-  handleDownload(await res.blob(), finalName);
+    const finalName = createFilename(fromDate, toDate);
+    handleDownload(await res.blob(), finalName);
+  } catch (err) {
+    throw new Error(`Could not pass to json: ${err.message}`);
+  }
 }
 
 export async function apiLogout() {

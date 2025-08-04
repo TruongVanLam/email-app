@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { Modal, Spin, Table, Tag, Tooltip } from "antd";
 import { TableOutlined } from "@ant-design/icons";
 import { createStyles } from "antd-style";
@@ -126,6 +127,8 @@ export default function Dashboard() {
       });
       setData(res);
       setCurrentPage(page);
+    } catch (err) {
+      toast.error(err.message);
     } finally {
       setIsLoadingTable(false);
     }
@@ -149,6 +152,8 @@ export default function Dashboard() {
           pageSize,
         });
         setData(res);
+      } catch (err) {
+        toast.error(err.message);
       } finally {
         setIsLoadingTable(false);
       }
