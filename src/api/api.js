@@ -53,12 +53,17 @@ export async function apiGetAccounts() {
   }
 }
 
-export async function apiAddAccount() {
+export async function apiAddAccount(userId) {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/v1/login`, {
-      method: "GET",
-      headers: { accept: "application/json" },
-    });
+    const params = new URLSearchParams();
+    if (userId) params.append("user_id", userId);
+    const res = await fetch(
+      `${API_BASE_URL}/api/v1/login?${params.toString()}`,
+      {
+        method: "GET",
+        headers: { accept: "application/json" },
+      }
+    );
 
     return await res.json();
   } catch (err) {
@@ -128,4 +133,18 @@ export async function apiLogout() {
     },
   });
   localStorage.removeItem("token");
+}
+
+export async function apiDeleteAccount(accountId) {
+  const res = await fetch(
+    `${API_BASE_URL}/api/v1/users/accounts/${accountId}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  handleResponseError(res);
 }

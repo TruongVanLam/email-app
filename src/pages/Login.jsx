@@ -24,6 +24,7 @@ export default function Login() {
       login(token);
       localStorage.setItem("email", result.email);
       localStorage.setItem("role", result.role);
+      localStorage.setItem("user_id", result.user_id);
 
       navigate("/");
     } catch (err) {

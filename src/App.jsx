@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./pages/Dashboard";
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import Accounts from "./pages/Accounts";
 import { AuthProvider } from "./contexts/AuthContext";
 import { useAuth } from "./hooks/useAuth";
 
@@ -26,6 +27,8 @@ const AppRoutes = () => {
         element={token ? <MainLayout /> : <Navigate to="/login" replace />}
       >
         <Route index element={<Dashboard />} />
+        <Route path="home" element={<Dashboard />} />
+        <Route path="accounts" element={<Accounts />} />
       </Route>
 
       <Route path="*" element={<Navigate to={token ? "/" : "/login"} />} />

@@ -10,7 +10,8 @@ export default function AddAccount() {
 
   const handleAddAccount = async () => {
     try {
-      const result = await apiAddAccount();
+      const userId = localStorage.getItem("user_id");
+      const result = await apiAddAccount(userId);
 
       if (result?.login_url) {
         setLoginUrl(result.login_url);
@@ -36,7 +37,7 @@ export default function AddAccount() {
     <>
       <button
         onClick={handleAddAccount}
-        className="flex items-center cursor-pointer rounded-md bg-yellow-500 text-white px-4 py-2 hover:bg-yellow-600 transition duration-200"
+        className="flex items-center cursor-pointer rounded-md bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 transition duration-200"
       >
         <UserAddOutlined style={{ fontSize: "15px", marginRight: "3px" }} />
         <span>add account</span>

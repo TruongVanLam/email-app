@@ -13,9 +13,10 @@ import TableRowSelection from "../components/TableRowSelection";
 
 const useStyle = createStyles(({ css, token }) => {
   const { antCls } = token;
+
   return {
     customTable: css`
-      ${antCls}-table {
+      :global(${antCls}-table) {
         ${antCls}-table-container {
           ${antCls}-table-body,
           ${antCls}-table-content {
@@ -23,6 +24,16 @@ const useStyle = createStyles(({ css, token }) => {
             scrollbar-color: #eaeaea transparent;
             scrollbar-gutter: stable;
           }
+        }
+
+        // ✅ Custom header (nền + màu chữ)
+        ${antCls}-table-thead > tr > th {
+          background-color: #532f2f !important;
+          color: #eae4e4 !important;
+        }
+
+        ${antCls}-table-thead > tr > th::before {
+          background-color: transparent !important;
         }
       }
     `,
@@ -178,8 +189,8 @@ export default function Dashboard() {
   const totalEmails = emails.length;
 
   return (
-    <div className="px-10">
-      <div className="bg-white rounded mb-4">
+    <>
+      <div className=" rounded mb-4">
         <div className="flex items-center mt-7 gap-40">
           <div className="flex gap-5 items-center">
             <div className="flex gap-7 items-center">
@@ -282,6 +293,6 @@ export default function Dashboard() {
           <Spin tip="Exporting..." />
         </div>
       )}
-    </div>
+    </>
   );
 }
